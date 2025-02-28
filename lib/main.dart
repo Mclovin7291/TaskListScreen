@@ -47,6 +47,12 @@ class _TaskListScreenState extends State<TaskListScreen> {
     });
   }
 
+  void _toggleTask(int index) {
+    setState(() {
+      _tasks[index].isCompleted = !_tasks[index].isCompleted;
+    });
+  }
+
   @override
   void dispose() {
     _taskController.dispose();
@@ -84,9 +90,24 @@ class _TaskListScreenState extends State<TaskListScreen> {
               ],
             ),
           ),
-          const Expanded(
-            child: Center(
-              child: Text('No tasks yet'),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _tasks.length,
+              itemBuilder: (context, index) {
+                final task = _tasks[index];
+                return ListTile(
+                  leading: Checkbox(
+                    value: task.isCompleted,
+                    onChanged: (_) => _toggleTask(index),
+                  ),
+                  title: Text(
+                    task.name,
+                    style: TextStyle(
+                      decoration: task.isCompleted ? TextDecoration.lineThrough : null,
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         ],
