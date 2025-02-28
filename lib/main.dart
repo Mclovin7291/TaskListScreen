@@ -53,6 +53,48 @@ class _TaskListScreenState extends State<TaskListScreen> {
     });
   }
 
+  void _deleteTask(int index) {
+    setState(() {
+      _tasks.removeAt(index);
+    });
+  }
+
+  void _editTask(int index) {
+    final TextEditingController editController = TextEditingController(text: _tasks[index].name);
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Edit Task'),
+        content: TextField(
+          controller: editController,
+          decoration: const InputDecoration(
+            hintText: 'Enter new task name',
+            border: OutlineInputBorder(),
+          ),
+          autofocus: true,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              if (editController.text.isNotEmpty) {
+                setState(() {
+                  _tasks[index].name = editController.text;
+                });
+                Navigator.pop(context);
+              }
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   void dispose() {
     _taskController.dispose();
@@ -105,6 +147,19 @@ class _TaskListScreenState extends State<TaskListScreen> {
                     style: TextStyle(
                       decoration: task.isCompleted ? TextDecoration.lineThrough : null,
                     ),
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit),
+                        onPressed: () => _editTask(index),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () => _deleteTask(index),
+                      ),
+                    ],
                   ),
                 );
               },
